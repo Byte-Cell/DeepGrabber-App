@@ -14,6 +14,9 @@ def gather_system_info():
         # Speed test
         download_speed, upload_speed = run_speedtest()
 
+        download_speed = download_speed or 0.0
+        upload_speed = upload_speed or 0.0
+
         # System stats
         cpu_usage = psutil.cpu_percent(interval=1)
         memory_info = psutil.virtual_memory()
@@ -25,7 +28,11 @@ def gather_system_info():
         # Network info
         hostname = socket.gethostname()
         local_ip = socket.gethostbyname(hostname)
-        public_ip = requests.get('https://ipinfo.io/ip').text.strip()
+        public_ip = "N/A"  
+        try:
+            public_ip = requests.get('https://ipinfo.io/ip').text.strip()
+        except Exception as e:
+            print(f"Failed to get public IP: {str(e)}")
         fqdn = socket.getfqdn()
 
         # Platform info
@@ -68,10 +75,12 @@ def gather_system_info():
         }
     except Exception as e:
         print(f"Error gathering system info: {str(e)}")
-        return {"error": str(e)}
+        return {"error": f"System info error: {str(e)}"}
 
-@app.route('/')
+@app.route('/', methods=['GET', 'HEAD'])
 def index():
+    if request.method == 'HEAD':
+        return "", 200
     # Gather system info and pass to the template
     data = gather_system_info()
     return render_template("index.html", data=data)
@@ -91,7 +100,7 @@ def run_speedtest():
         return download_speed, upload_speed
     except Exception as e:
         print(f"Speedtest error: {str(e)}")
-        return None, None
+        return 0.0, 0.0
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))
