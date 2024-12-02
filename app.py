@@ -4,6 +4,7 @@ import psutil
 import socket
 import requests
 import platform
+import os
 
 app = Flask(__name__)
 
@@ -93,4 +94,5 @@ def run_speedtest():
         return None, None
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=int(os.getenv('PORT', 5000)))
+
