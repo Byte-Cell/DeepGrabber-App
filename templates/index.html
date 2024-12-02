@@ -14,10 +14,10 @@
             display: none; 
         }
         .list-group-item {
-        transition: transform 0.3s ease; 
+            transition: transform 0.3s ease; 
         }
         .list-group-item:hover {
-        transform: translateY(-5px); 
+            transform: translateY(-5px); 
         }
     </style>
 </head>
@@ -27,8 +27,12 @@
             <div class="col bg-black text-white h-25 p-4 d-flex flex-column justify-content-between">
                 <h2 class="fw-light">Deep<strong class="text-warning">Grab</strong>.</h2>
                 <div class="d-flex flex-row justify-content-between align-items-center mt-auto">
-                    <button type="button" class="btn btn-outline-light">Run Test</button>
-                    <p class="text-warning">{{ data.speed_info.download_speed if data else "N/A" }}</p>
+                    <form action="/" method="POST">
+                        <button type="submit" class="btn btn-outline-light">Run Test</button>
+                    </form>
+                    {% if data %}
+                        <p class="text-warning">{{ data.speed_info.download_speed }}</p>
+                    {% endif %}
                 </div>
             </div>
             <div class="col h-75 w-100 p-0 overflow-y-auto hide-scrollbar">
@@ -60,7 +64,7 @@
                         </li>
                         <li class="list-group-item d-flex flex-row justify-content-between align-items-center">
                             <strong>CPU Usage</strong>
-                            <p>{{ data.memory_info.memory_percentage }}</p>
+                            <p>{{ data.cpu_usage }}</p>
                         </li>
                         <li class="list-group-item d-flex flex-row justify-content-between align-items-center">
                             <strong>Total Memory</strong>
@@ -87,12 +91,13 @@
                             <p>{{ data.platform_info.version }}</p>
                         </li>
                     {% else %}
-                        <p class="text-danger text-center">No data available.</p>
+                        <p class="text-danger text-center">No data available. Please run the test.</p>
                     {% endif %}
                 </ul>
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

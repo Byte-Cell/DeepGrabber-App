@@ -77,12 +77,12 @@ def gather_system_info():
         print(f"Error gathering system info: {str(e)}")
         return {"error": f"System info error: {str(e)}"}
 
-@app.route('/', methods=['GET', 'HEAD'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'HEAD':
-        return "", 200
-    # Gather system info and pass to the template
-    data = gather_system_info()
+    data = None
+    if request.method == 'POST':
+        # Gather system info only when the button is clicked
+        data = gather_system_info()
     return render_template("index.html", data=data)
 
 @app.route('/speedtest')
@@ -95,8 +95,8 @@ def run_speedtest():
     try:
         st = speedtest.Speedtest()
         st.get_best_server()
-        download_speed = st.download() / 1_000_000  
-        upload_speed = st.upload() / 1_000_000  
+        download_speed = st.download() / 1_000_000  # Convert to Mbps
+        upload_speed = st.upload() / 1_000_000  # Convert to Mbps
         return download_speed, upload_speed
     except Exception as e:
         print(f"Speedtest error: {str(e)}")
@@ -105,4 +105,3 @@ def run_speedtest():
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
-
